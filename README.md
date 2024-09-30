@@ -1,0 +1,27 @@
+- Template for reference: (https://www.figma.com/community/file/1245674654540637066)
+- Library used: Bcrypt, Cors, Dotenv, Express, JsonWebToken, MSSQL, NodeCron, Nodemon
+- Database: SQL Server
+- API List:
+  - Authentication:    
+   - app.post('/api/auth/login', async (req, res) => {})
+   - app.post('/api/auth/logout', async (req, res) => {})
+   - app.post('/api/auth/invite-member', async (req, res) => {})
+  - Project Management:
+   - app.post('/api/project/add', async (req, res) => {})
+   - app.patch('/api/project/update/:id', async (req, res) => {})
+   - app.get('/api/project/get-all', async (req, res) => {})
+  - Task Management:
+   - app.post('/api/task', async (req, res) => {})
+   - app.get('/api/task', async (req, res) => {})
+   - app.patch('/api/task/:id', async (req, res) => {}) // priority, description, status, deadline
+   - app.post('/api/task/assign/', async (req, res) => {}) // userId, taskId in body
+  - Team Collaboration:
+   - app.get('/api/task?user=""', async (req, res) => {})
+   - app.post('/api/comment', async (req, res) => {})
+   - app.get('/api/comment', async (req, res) => {})
+   - app.patch('/api/comment/:id', async (req, res) => {})
+   - app.delete('/api/comment/:id', async (req, res) => {})
+  - Reminder:
+   - app.get('/api/mail', async (req, res) => {})
+   - app.get('/api/notify', async (req, res) => {})
+- ERD: {image}
