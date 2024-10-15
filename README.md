@@ -211,4 +211,6 @@ Manager can manage another user, change status, or delete
 - Template for reference: (https://www.figma.com/community/file/1245674654540637066)
 - Library used: bcryptjs, body-parser, cookie-parser, cors, dotenv, express, express-validator, jsonwebtoken, mongodb, mongoose, morgan, node-cron, nodemailer, nodemon
 - Database: MongoDB
-- ERD: {image}
+- ERD: 
+
+![img](erd.png)
