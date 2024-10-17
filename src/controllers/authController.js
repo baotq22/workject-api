@@ -1,4 +1,5 @@
 import User from "../models/userModel.js";
+import bcrypt from 'bcryptjs';
 import { validationResult, body } from 'express-validator';
 import { createJWT } from "../utils/createJWT.js";
 import { sendWelcomeEmail } from '../service/emailService.js';
@@ -121,24 +122,27 @@ export const logoutUser = async (req, res, next) => {
 export const changeUserPassword = async (req, res, next) => {
   try {
     const { userId } = req.user;
+    const { currentPassword, password } = req.body;
 
     const user = await User.findById(userId);
 
-    if (user) {
-      user.password = req.body.password;
-
-      await user.save();
-
-      user.password = undefined;
-
-      res.status(201).json({
-        status: true,
-        message: "Chnage password successfully"
-      })
-    } else {
-      res.status(404).json({ status: false, message: "User not found" })
+    if (!user) {
+      return res.status(404).json({ status: false, message: "User not found" });
     }
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ status: false, message: "Current password is incorrect" });
+    }
+
+    user.password = password;
+    await user.save();
+
+    res.status(200).json({
+      status: true,
+      message: "Password changed successfully"
+    });
   } catch (error) {
-    res.status(400).json({ status: false, message: error.message })
+    res.status(400).json({ status: false, message: error.message });
   }
 }
