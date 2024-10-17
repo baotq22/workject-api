@@ -1,101 +1,5 @@
 import User from "../models/userModel.js";
 import Notice from "../models/noticeModel.js";
-import { createJWT } from "../utils/createJWT.js";
-import { sendWelcomeEmail } from '../service/emailService.js';
-import { generateRandomPassword } from "../utils/generatePassword.js";
-
-export const registerUser = async (req, res, next) => {
-  try {
-    const { name, email, isAdmin, role, title } = req.body;
-
-    const userExist = await User.findOne({ email });
-
-    if (userExist) {
-      return res.status(400).json({
-        status: false,
-        message: "User already exists",
-      });
-    }
-
-    const generatedPassword = generateRandomPassword();
-
-    const user = await User.create({
-      name,
-      email,
-      password: generatedPassword,
-      isAdmin,
-      role,
-      title,
-    });
-
-    if (user) {
-      if (isAdmin) {
-        createJWT(res, user._id);
-      }
-
-      user.password = undefined;
-
-      try {
-        await sendWelcomeEmail(user.email, user.name, generatedPassword);
-      } catch (emailError) {
-        console.error('Error sending email:', emailError.message);
-      }
-
-      res.status(201).json(user);
-    } else {
-      return res.status(400).json({
-        status: false,
-        message: "Invalid user data",
-      });
-    }
-  } catch (error) {
-    res.status(400).json({ status: false, message: error.message });
-  }
-};
-
-
-export const loginUser = async (req, res, next) => {
-  try {
-    const { email, password } = req.body;
-
-    const user = await User.findOne({ email });
-
-    if (!user) {
-      return res.status(401).json({ status: false, message: "Invalid email or password" });
-    }
-
-    if (!user?.isActive) {
-      return res.status(401).json({ status: false, message: "Your account is disabled. Please contact to administrator!" });
-    }
-
-    const isMatch = await user.matchPassword(password);
-
-    if (user && isMatch) {
-      createJWT(res, user._id);
-
-      user.password = undefined;
-
-      res.status(200).json(user);
-    } else {
-      return res.status(401).json({ status: false, message: "Invalid email or password" });
-    }
-  } catch (error) {
-    res.status(400).json({ status: false, message: error.message })
-  }
-}
-
-export const logoutUser = async (req, res, next) => {
-  try {
-    res.cookie("token", "", {
-      httpOnly: true,
-      expires: new Date(0)
-    });
-
-    res.status(200).json({ message: "Logout successful!" })
-  } catch (error) {
-    res.status(400).json({ status: false, message: error.message })
-  }
-}
 
 export const getTeamList = async (req, res, next) => {
   try {
@@ -108,7 +12,11 @@ export const getTeamList = async (req, res, next) => {
     const users = await User.find().select("name title role email isActive");
     res.status(200).json(users)
   } catch (error) {
-    res.status(400).json({ status: false, message: error.message })
+    if (error.name === "ValidationError" || error.name === "CastError") {
+      res.status(400).json({ status: false, message: "Operation error!" });
+    } else {
+      res.status(500).json({ status: false, message: "Database connection error. Please try again later!" });
+    }
   }
 }
 
@@ -127,7 +35,11 @@ export const getNotificationsList = async (req, res, next) => {
 
     res.status(201).json({ notice, unreadCount });
   } catch (error) {
-    res.status(400).json({ status: false, message: error.message });
+    if (error.name === "ValidationError" || error.name === "CastError") {
+      res.status(400).json({ status: false, message: "Operation error!" });
+    } else {
+      res.status(500).json({ status: false, message: "Database connection error. Please try again later!" });
+    }
   }
 }
 
@@ -158,7 +70,11 @@ export const updateUserProfile = async (req, res, next) => {
       res.status(404).json({ status: false, message: "User not found" })
     }
   } catch (error) {
-    res.status(400).json({ status: false, message: error.message })
+    if (error.name === "ValidationError" || error.name === "CastError") {
+      res.status(400).json({ status: false, message: "Operation error!" });
+    } else {
+      res.status(500).json({ status: false, message: "Database connection error. Please try again later!" });
+    }
   }
 }
 
@@ -186,32 +102,11 @@ export const markNotificationAsRead = async (req, res, next) => {
       message: "Mark Done"
     })
   } catch (error) {
-    res.status(400).json({ status: false, message: error.message })
-  }
-}
-
-export const changeUserPassword = async (req, res, next) => {
-  try {
-    const { userId } = req.user;
-
-    const user = await User.findById(userId);
-
-    if (user) {
-      user.password = req.body.password;
-
-      await user.save();
-
-      user.password = undefined;
-
-      res.status(201).json({
-        status: true,
-        message: "Chnage password successfully"
-      })
+    if (error.name === "ValidationError" || error.name === "CastError") {
+      res.status(400).json({ status: false, message: "Operation error!" });
     } else {
-      res.status(404).json({ status: false, message: "User not found" })
+      res.status(500).json({ status: false, message: "Database connection error. Please try again later!" });
     }
-  } catch (error) {
-    res.status(400).json({ status: false, message: error.message })
   }
 }
 
@@ -234,7 +129,11 @@ export const activateUserProfile = async (req, res, next) => {
       res.status(404).json({ status: false, message: "User not found" })
     }
   } catch (error) {
-    res.status(400).json({ status: false, message: error.message })
+    if (error.name === "ValidationError" || error.name === "CastError") {
+      res.status(400).json({ status: false, message: "Operation error!" });
+    } else {
+      res.status(500).json({ status: false, message: "Database connection error. Please try again later!" });
+    }
   }
 }
 
@@ -249,6 +148,10 @@ export const deleteUserProfile = async (req, res, next) => {
       message: `Deleted Successfully`
     })
   } catch (error) {
-    res.status(400).json({ status: false, message: error.message })
+    if (error.name === "ValidationError" || error.name === "CastError") {
+      res.status(400).json({ status: false, message: "Operation error!" });
+    } else {
+      res.status(500).json({ status: false, message: "Database connection error. Please try again later!" });
+    }
   }
 }

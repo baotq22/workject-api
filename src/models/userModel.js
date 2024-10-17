@@ -3,16 +3,27 @@ import mongoose, { Schema } from "mongoose";
 
 const userSchema = new Schema(
   {
-    name: { type: String, required: true },
-    title: { type: String, required: true },
+    name: { type: String, required: true, trim: true, minLength: 2 },
+    title: { type: String, required: true, trim: true },
     role: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
-    isAdmin: { type: Boolean, required: true, default: false },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+      lowercase: true,
+      match: [/.+@.+\..+/, "Please enter a valid email address"],
+    },
+    password: { type: String, required: true, minlength: 6 },
+    isAdmin: { type: Boolean, default: false },
     tasks: [{ type: Schema.Types.ObjectId, ref: "Task" }],
-    isActive: { type: Boolean, required: true, default: true },
+    isActive: { type: Boolean, default: true },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  }
 );
 
 userSchema.pre("save", async function (next) {

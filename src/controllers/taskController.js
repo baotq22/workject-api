@@ -49,8 +49,11 @@ export const createTask = async (req, res, next) => {
 
     res.status(200).json({ status: true, message: "Task created successfully!" });
   } catch (error) {
-    res.status(400).json({ status: false, message: error.message })
-    console.log(error.message);
+    if (error.name === "ValidationError" || error.name === "CastError") {
+      res.status(400).json({ status: false, message: "Operation error!" });
+    } else {
+      res.status(500).json({ status: false, message: "Database connection error. Please try again later!" });
+    }
   }
 }
 
@@ -99,7 +102,11 @@ export const duplicateTask = async (req, res, next) => {
 
     res.status(200).json({ status: true, message: "Task duplicated successfully!" });
   } catch (error) {
-    res.status(400).json({ status: false, message: error.message })
+    if (error.name === "ValidationError" || error.name === "CastError") {
+      res.status(400).json({ status: false, message: "Operation error!" });
+    } else {
+      res.status(500).json({ status: false, message: "Database connection error. Please try again later!" });
+    }
   }
 }
 
@@ -141,7 +148,11 @@ export const postTaskActivity = async (req, res, next) => {
 
     res.status(200).json({ status: true, message: "Activity posted successfully!" });
   } catch (error) {
-    res.status(400).json({ status: false, message: error.message })
+    if (error.name === "ValidationError" || error.name === "CastError") {
+      res.status(400).json({ status: false, message: "Operation error!" });
+    } else {
+      res.status(500).json({ status: false, message: "Database connection error. Please try again later!" });
+    }
   }
 }
 
@@ -208,7 +219,11 @@ export const dashboardStatistics = async (req, res, next) => {
       ...summary,
     });
   } catch (error) {
-    res.status(400).json({ status: false, message: error.message })
+    if (error.name === "ValidationError" || error.name === "CastError") {
+      res.status(400).json({ status: false, message: "Operation error!" });
+    } else {
+      res.status(500).json({ status: false, message: "Database connection error. Please try again later!" });
+    }
   }
 }
 
@@ -240,7 +255,11 @@ export const getTasks = async (req, res, next) => {
       tasks
     })
   } catch (error) {
-    res.status(400).json({ status: false, message: error.message })
+    if (error.name === "ValidationError" || error.name === "CastError") {
+      res.status(400).json({ status: false, message: "Operation error!" });
+    } else {
+      res.status(500).json({ status: false, message: "Database connection error. Please try again later!" });
+    }
   }
 }
 
@@ -260,7 +279,11 @@ export const getTaskById = async (req, res, next) => {
       task
     })
   } catch (error) {
-    res.status(400).json({ status: false, message: error.message })
+    if (error.name === "ValidationError" || error.name === "CastError") {
+      res.status(400).json({ status: false, message: "Operation error!" });
+    } else {
+      res.status(500).json({ status: false, message: "Database connection error. Please try again later!" });
+    }
   }
 }
 
@@ -281,7 +304,11 @@ export const createSubTask = async (req, res, next) => {
 
     res.status(200).json({ status: true, message: "Add sub-task successfully!" });
   } catch (error) {
-    res.status(400).json({ status: false, message: error.message })
+    if (error.name === "ValidationError" || error.name === "CastError") {
+      res.status(400).json({ status: false, message: "Operation error!" });
+    } else {
+      res.status(500).json({ status: false, message: "Database connection error. Please try again later!" });
+    }
   }
 }
 
@@ -304,7 +331,11 @@ export const updateTask = async (req, res, next) => {
 
     res.status(200).json({ status: true, message: "Updated task successfully!" });
   } catch (error) {
-    res.status(400).json({ status: false, message: error.message })
+    if (error.name === "ValidationError" || error.name === "CastError") {
+      res.status(400).json({ status: false, message: "Operation error!" });
+    } else {
+      res.status(500).json({ status: false, message: "Database connection error. Please try again later!" });
+    }
   }
 }
 
@@ -320,7 +351,11 @@ export const trashTask = async (req, res, next) => {
 
     res.status(200).json({ status: true, message: "Deleted task successfully!" });
   } catch (error) {
-    res.status(400).json({ status: false, message: error.message })
+    if (error.name === "ValidationError" || error.name === "CastError") {
+      res.status(400).json({ status: false, message: "Operation error!" });
+    } else {
+      res.status(500).json({ status: false, message: "Database connection error. Please try again later!" });
+    }
   }
 }
 
@@ -344,6 +379,10 @@ export const deleteRestoreTask = async (req, res, next) => {
 
     res.status(200).json({ status: true, message: "Operation successfully!" });
   } catch (error) {
-    res.status(400).json({ status: false, message: error.message })
+    if (error.name === "ValidationError" || error.name === "CastError") {
+      res.status(400).json({ status: false, message: "Operation error!" });
+    } else {
+      res.status(500).json({ status: false, message: "Database connection error. Please try again later!" });
+    }
   }
 }
