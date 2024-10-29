@@ -1,5 +1,6 @@
 import User from "../models/userModel.js";
 import Notice from "../models/noticeModel.js";
+import { handleError } from '../utils/errorHandler.js';
 
 export const getTeamList = async (req, res, next) => {
   try {
@@ -12,11 +13,7 @@ export const getTeamList = async (req, res, next) => {
     const users = await User.find().select("name title role email isActive");
     res.status(200).json(users)
   } catch (error) {
-    if (error.name === "ValidationError" || error.name === "CastError") {
-      res.status(400).json({ status: false, message: "Operation error!" });
-    } else {
-      res.status(500).json({ status: false, message: "Database connection error. Please try again later!" });
-    }
+    handleError(res, error);
   }
 }
 
@@ -35,11 +32,7 @@ export const getNotificationsList = async (req, res, next) => {
 
     res.status(201).json({ notice, unreadCount });
   } catch (error) {
-    if (error.name === "ValidationError" || error.name === "CastError") {
-      res.status(400).json({ status: false, message: "Operation error!" });
-    } else {
-      res.status(500).json({ status: false, message: "Database connection error. Please try again later!" });
-    }
+    handleError(res, error);
   }
 }
 
@@ -70,11 +63,7 @@ export const updateUserProfile = async (req, res, next) => {
       res.status(404).json({ status: false, message: "User not found" })
     }
   } catch (error) {
-    if (error.name === "ValidationError" || error.name === "CastError") {
-      res.status(400).json({ status: false, message: "Operation error!" });
-    } else {
-      res.status(500).json({ status: false, message: "Database connection error. Please try again later!" });
-    }
+    handleError(res, error);
   }
 }
 
@@ -102,11 +91,7 @@ export const markNotificationAsRead = async (req, res, next) => {
       message: "Mark Done"
     })
   } catch (error) {
-    if (error.name === "ValidationError" || error.name === "CastError") {
-      res.status(400).json({ status: false, message: "Operation error!" });
-    } else {
-      res.status(500).json({ status: false, message: "Database connection error. Please try again later!" });
-    }
+    handleError(res, error);
   }
 }
 
@@ -129,11 +114,7 @@ export const activateUserProfile = async (req, res, next) => {
       res.status(404).json({ status: false, message: "User not found" })
     }
   } catch (error) {
-    if (error.name === "ValidationError" || error.name === "CastError") {
-      res.status(400).json({ status: false, message: "Operation error!" });
-    } else {
-      res.status(500).json({ status: false, message: "Database connection error. Please try again later!" });
-    }
+    handleError(res, error);
   }
 }
 
@@ -148,10 +129,6 @@ export const deleteUserProfile = async (req, res, next) => {
       message: `Deleted Successfully`
     })
   } catch (error) {
-    if (error.name === "ValidationError" || error.name === "CastError") {
-      res.status(400).json({ status: false, message: "Operation error!" });
-    } else {
-      res.status(500).json({ status: false, message: "Database connection error. Please try again later!" });
-    }
+    handleError(res, error);
   }
 }

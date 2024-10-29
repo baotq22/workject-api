@@ -4,6 +4,7 @@ import { validationResult, body } from 'express-validator';
 import { createJWT } from "../utils/createJWT.js";
 import { sendWelcomeEmail } from '../service/emailService.js';
 import { generateRandomPassword } from "../utils/generatePassword.js";
+import { handleError } from '../utils/errorHandler.js';
 
 export const registerUser = async (req, res, next) => {
   const validationErrors = [
@@ -71,7 +72,7 @@ export const registerUser = async (req, res, next) => {
       });
     }
   } catch (error) {
-    res.status(400).json({ status: false, message: error.message });
+    handleError(res, error);
   }
 };
 
@@ -102,7 +103,7 @@ export const loginUser = async (req, res, next) => {
       return res.status(401).json({ status: false, message: "Invalid email or password" });
     }
   } catch (error) {
-    res.status(400).json({ status: false, message: error.message })
+    handleError(res, error);
   }
 }
 
@@ -115,7 +116,7 @@ export const logoutUser = async (req, res, next) => {
 
     res.status(200).json({ message: "Logout successful!" })
   } catch (error) {
-    res.status(400).json({ status: false, message: error.message })
+    handleError(res, error);
   }
 }
 
@@ -143,6 +144,6 @@ export const changeUserPassword = async (req, res, next) => {
       message: "Password changed successfully"
     });
   } catch (error) {
-    res.status(400).json({ status: false, message: error.message });
+    handleError(res, error);
   }
 }
